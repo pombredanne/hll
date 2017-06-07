@@ -49,16 +49,12 @@ static INLINE std::uint64_t roundup64(std::size_t x) noexcept {
     return ++x;
 }
 
-#define clztbl(x, arg) do {\
-    switch(arg) {\
-        case 0:                         x += 4; break;\
-        case 1:                         x += 3; break;\
-        case 2: case 3:                 x += 2; break;\
-        case 4: case 5: case 6: case 7: x += 1; break;\
-    }} while(0)
 
-constexpr INLINE int clz_manual( std::uint32_t x )
+#define clztbl(x, arg) do {x += CLZTBL[arg];} while(0)
+
+constexpr INLINE int clz_manual(std::uint32_t x)
 {
+  const uint32_t CLZTBL [] {4, 3, 2, 2, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0};
   int n(0);
   if ((x & 0xFFFF0000) == 0) {n  = 16; x <<= 16;}
   if ((x & 0xFF000000) == 0) {n +=  8; x <<=  8;}
@@ -70,6 +66,7 @@ constexpr INLINE int clz_manual( std::uint32_t x )
 // Overload
 constexpr INLINE int clz_manual( std::uint64_t x )
 {
+  const uint32_t CLZTBL [] {4, 3, 2, 2, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0};
   int n(0);
   if ((x & 0xFFFFFFFF00000000ull) == 0) {n  = 32; x <<= 32;}
   if ((x & 0xFFFF000000000000ull) == 0) {n += 16; x <<= 16;}
